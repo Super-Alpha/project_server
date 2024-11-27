@@ -1,0 +1,17 @@
+{
+  "files.watcherExclude": {
+    "**/target": true
+  },
+  "go.goroot": "/Users/a58/sdk/go1.21.0",
+  "gopls": {
+    "build.experimentalWorkspaceModule": true,
+    "build.expandWorkspaceToModule": true
+  },
+  "go.testEnvVars": {
+    "CONFIG_PATH" : "${workspaceRoot}/config/config_dev/"
+  },
+  "go.testFlags": [
+    "-v",
+    "-count=1"
+  ]
+}
