@@ -994,14 +994,32 @@ func compoundInterests(principal float64, rate float64, timesCompounded int, yea
 	return principal * math.Pow(1+rate/float64(timesCompounded), float64(timesCompounded*years))
 }
 
+/*
+topic = "demo"
+
+partition0: hello partition1, offset = 2
+
+partition1: hello partition0, offset = 2
+
+partition2: hello partition2, offset = 2
+*/
+
 func main() {
 	//kafka.Producer()
 
-	kafka.Consumer()
+	//kafka.Consumer()
 
-	//kafka.ConsumerGroupMain()
+	//kafka.ConsumerGroup()
 
 	//kafka.Broker()
 
-	//kafka.Main()
+	//kafka.ClusterAdmin()
+
+	//kafka.OffsetManager()
+
+	msg, err := kafka.GetAllMessagesByTopic("demo")
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(msg)
 }

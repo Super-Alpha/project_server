@@ -11,8 +11,8 @@ import (
  * @Description: 针对broker节点，执行某些操作（比如获取元数据（该节点上主题、分区、节点ID））
  */
 
-// 连接单一节点
-func Broker() {
+// SingleBroker 连接单一节点(单点模式)
+func SingleBroker() {
 	config := sarama.NewConfig()
 	config.Producer.Return.Successes = true
 	config.Producer.Return.Errors = true
@@ -36,13 +36,22 @@ func Broker() {
 		}
 	}
 
+	offsetFetchRequest := sarama.NewOffsetFetchRequest(sarama.V1_1_1_0, "test", map[string][]int32{"test": {0}})
+
+	offsetFetchResponse, err := broker.FetchOffset(offsetFetchRequest)
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Printf("FetchOffset %+v\n", offsetFetchResponse)
+
 	if err = broker.Close(); err != nil {
 		panic(err)
 	}
 }
 
-// 连接多个broker节点
-func Brokers() {
+// ClusterBroker 连接多个broker节点(集群模式)
+func ClusterBroker() {
 	config := sarama.NewConfig()
 
 	config.Producer.Return.Successes = true

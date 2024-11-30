@@ -16,7 +16,8 @@ import (
 func ConsumerGroup() {
 
 	config := sarama.NewConfig()
-	config.Consumer.Group.Rebalance.Strategy = sarama.BalanceStrategyRange // 针对消费者组的分区分配策略
+
+	config.Consumer.Offsets.AutoCommit.Enable = true
 	config.Consumer.Offsets.Initial = sarama.OffsetNewest
 	config.ChannelBufferSize = 1024 // channel长度
 
@@ -45,17 +46,17 @@ func ConsumerGroup() {
 func CreateConsumerAndConsume(ctx context.Context, config *sarama.Config, consumerName string) error {
 
 	// 创建client
-	newClient, err := sarama.NewClient([]string{"localhost:9092"}, config)
+	newClient, err := sarama.NewClient([]string{"localhost:9092", "localhost:9093", "localhost:9094"}, config)
 	if err != nil {
 		return err
 	}
 
 	// 获取所有的topic
-	tps, err := newClient.Topics()
-	if err != nil {
-		return err
-	}
-	fmt.Printf("topics: %s\n", tps)
+	//tps, err := newClient.Topics()
+	//if err != nil {
+	//	return err
+	//}
+	//fmt.Printf("topics: %s\n", tps)
 
 	// 根据client创建consumerGroup客户端
 	client, err := sarama.NewConsumerGroupFromClient("test-group", newClient)
@@ -73,7 +74,7 @@ func CreateConsumerAndConsume(ctx context.Context, config *sarama.Config, consum
 
 	for {
 		// 该方法要在循环中调用，否则会阻塞
-		if err = client.Consume(ctx, []string{"test"}, handlerObject); err != nil {
+		if err = client.Consume(ctx, []string{"demo"}, handlerObject); err != nil {
 			return err
 		}
 	}
@@ -102,7 +103,7 @@ func (c *ConsumerGroupHandler) ConsumeClaim(session sarama.ConsumerGroupSession,
 			c.ConsumerName, session.MemberID(), message.Topic, message.Partition, message.Offset, string(message.Value), message.Timestamp.Format("2006-01-02 15:04:05"))
 		// 更新位移,标记消息已经被消费
 		session.MarkMessage(message, "consumed") // 自动提交位移
-		// session.Commit() 手动提交位移
+		//session.Commit()                         //手动提交位移
 	}
 	return nil
 }

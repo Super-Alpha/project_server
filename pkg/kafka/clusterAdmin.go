@@ -18,7 +18,7 @@ func NewClient() (*Client, error) {
 	config := sarama.NewConfig()
 	config.Producer.Return.Successes = true
 
-	client, err := sarama.NewClient([]string{"localhost:9092"}, config)
+	client, err := sarama.NewClient([]string{"localhost:9092", "localhost:9093", "localhost:9094"}, config)
 	if err != nil {
 		return nil, err
 	}
@@ -31,17 +31,19 @@ func NewClient() (*Client, error) {
 	return &Client{ClusterAdmin: admin}, nil
 }
 
-func (c *Client) CreateTopic() {
+func (c *Client) CreateTopic(topic string) error {
 	detail := sarama.TopicDetail{
-		NumPartitions:     3,
-		ReplicationFactor: 2,
+		NumPartitions:     3, // 三个分区
+		ReplicationFactor: 2, // 每个分区两个副本
 		ReplicaAssignment: nil,
 		ConfigEntries:     nil,
 	}
 
-	if err := c.ClusterAdmin.CreateTopic("test", &detail, false); err != nil {
-		log.Fatal("Error creating topic: ", err)
+	if err := c.ClusterAdmin.CreateTopic(topic, &detail, false); err != nil {
+		return err
 	}
+
+	return nil
 }
 
 func (c *Client) ConsumerGroups() {
@@ -62,7 +64,13 @@ func (c *Client) DeleteRecords() {
 	}
 }
 
-func Main() {
+func (c *Client) DeleteTopic(topic string) {
+	if err := c.ClusterAdmin.DeleteTopic(topic); err != nil {
+		log.Fatal("Error deleting topic: ", err)
+	}
+}
+
+func ClusterAdmin() {
 	client, err := NewClient()
 	if err != nil {
 		return
@@ -70,5 +78,7 @@ func Main() {
 
 	defer client.ClusterAdmin.Close()
 
-	client.DeleteRecords()
+	if err = client.CreateTopic("demo"); err != nil {
+		log.Fatal("Error creating topic: ", err)
+	}
 }
