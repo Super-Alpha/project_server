@@ -7,7 +7,6 @@ import (
 	"math"
 	"math/rand"
 	"net/url"
-	"project_server/pkg/kafka"
 	"sort"
 	"strings"
 	"sync"
@@ -994,32 +993,13 @@ func compoundInterests(principal float64, rate float64, timesCompounded int, yea
 	return principal * math.Pow(1+rate/float64(timesCompounded), float64(timesCompounded*years))
 }
 
-/*
-topic = "demo"
-
-partition0: hello partition1, offset = 2
-
-partition1: hello partition0, offset = 2
-
-partition2: hello partition2, offset = 2
-*/
-
 func main() {
 	//kafka.Producer()
-
 	//kafka.Consumer()
-
 	//kafka.ConsumerGroup()
-
 	//kafka.Broker()
-
 	//kafka.ClusterAdmin()
-
 	//kafka.OffsetManager()
-
-	msg, err := kafka.GetAllMessagesByTopic("demo")
-	if err != nil {
-		panic(err)
-	}
-	fmt.Println(msg)
+	//msg, _:= kafka.GetAllMessagesByTopic("demo")
+	fmt.Println(compoundInterests(200000, 0.02, 1, 50))
 }
