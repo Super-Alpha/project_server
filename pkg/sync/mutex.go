@@ -2,17 +2,9 @@ package main
 
 import (
 	"fmt"
-	"strconv"
 	"sync"
 	"time"
 )
-
-/*
-    读写锁（RWMutex）是一种读多写少锁。它用于保护被多个 goroutine 同时读取但只有一个 goroutine 写入的共享资源。
-	在读操作时，可以允许多个goroutine并发访问，并发性能更高。而在写操作时，只允许一个 goroutine 进入临界区域，其他读写请求都会被阻塞。
-	读写锁适用于读操作非常频繁，写操作相对较少的场景。读写锁通过 RLock()、RUnlock()、Lock() 和 Unlock() 方法来获取和释放锁。
-	读写互斥锁在互斥锁之上提供了额外的更细粒度的控制，能够在读操作远远多于写操作时提升性能。
-*/
 
 /*
     互斥锁（Mutex）是一种独占锁。它用于保护共享资源，使得同一时刻只有一个goroutine能访问该资源。其有两种模式，正常模式、饥饿模式
@@ -21,6 +13,13 @@ import (
 
 	在饥饿模式中，互斥锁会直接交给等待队列最前面的 Goroutine。新的 Goroutine 在该状态下不能获取锁、也不会进入自旋状态，它们只会在队列的末尾等待。
 	如果一个 Goroutine 获得了互斥锁并且它在队列的末尾或者它等待的时间少于 1ms，那么当前的互斥锁就会切换回正常模式。
+*/
+
+/*
+    读写锁（RWMutex）是一种读多写少锁。它用于保护被多个 goroutine 同时读取但只有一个 goroutine 写入的共享资源。
+	在读操作时，可以允许多个goroutine并发访问，并发性能更高。而在写操作时，只允许一个 goroutine 进入临界区域，其他读写请求都会被阻塞。
+	读写锁适用于读操作非常频繁，写操作相对较少的场景。读写锁通过 RLock()、RUnlock()、Lock() 和 Unlock() 方法来获取和释放锁。
+	读写互斥锁在互斥锁之上提供了额外的更细粒度的控制，能够在读操作远远多于写操作时提升性能。
 */
 
 var (
@@ -54,21 +53,6 @@ func read() {
 	//rwLock.RUnlock() // 解读锁
 
 	wg.Done()
-}
-
-func syncMap() {
-	m := sync.Map{}
-	for i := 0; i < 10; i++ {
-		m.Store("label"+strconv.Itoa(i), i)
-	}
-
-	m.Range(func(key, value interface{}) bool {
-		fmt.Printf("%s = %d\n", key, value)
-		if value == 8 {
-			return false
-		}
-		return true
-	})
 }
 
 func main() {

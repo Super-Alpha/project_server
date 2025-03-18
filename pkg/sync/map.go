@@ -2,8 +2,24 @@ package main
 
 import (
 	"fmt"
+	"strconv"
 	"sync"
 )
+
+func syncMap() {
+	m := sync.Map{}
+	for i := 0; i < 10; i++ {
+		m.Store("label"+strconv.Itoa(i), i)
+	}
+
+	m.Range(func(key, value interface{}) bool {
+		fmt.Printf("%s = %d\n", key, value)
+		if value == 8 {
+			return false
+		}
+		return true
+	})
+}
 
 func sum(s []int, tag string, c chan *sync.Map, wg *sync.WaitGroup, once *sync.Once) {
 

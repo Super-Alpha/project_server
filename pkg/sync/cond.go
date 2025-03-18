@@ -32,10 +32,12 @@ func broadcast(c *sync.Cond) {
 func listen(c *sync.Cond, signal int) {
 	// Wait()调用前，一定要使用互斥锁，否则会触发程序崩溃
 	c.L.Lock()
+
 	for !done {
 		c.Wait()
 	}
 	fmt.Println("listen", signal)
+
 	c.L.Unlock()
 }
 

@@ -1,4 +1,4 @@
-package reflect
+package main
 
 import (
 	"fmt"
@@ -70,6 +70,51 @@ func findDoc(str interface{}) map[string]string {
 	return doc
 }
 
+type Reflect struct {
+	Name string
+	Age  int
+}
+
+func (r Reflect) getType() {
+	t := reflect.TypeOf(r.Name)
+
+	fmt.Println(t)
+	fmt.Println(t.Kind())
+	fmt.Println(t.Name())
+}
+
+func (r Reflect) getValue() {
+	v := reflect.ValueOf(r.Age)
+
+	fmt.Println(v)
+	fmt.Println(v.Kind())
+}
+
+func (r Reflect) setValue() {
+	v := reflect.ValueOf(&r.Age)
+
+	if v.Kind() == reflect.Ptr {
+		v = v.Elem()
+	}
+
+	v.SetInt(20)
+
+	fmt.Println(r.Age)
+}
+
+func (r Reflect) reflectStruct() {
+	t := reflect.TypeOf(r)
+	v := reflect.ValueOf(r)
+
+	for i := 0; i < t.NumField(); i++ {
+		field := t.Field(i)
+		value := v.Field(i)
+		fmt.Printf("%s: %v\n", field.Name, value)
+	}
+
+	fmt.Println(t.Kind())
+}
+
 func main() {
 	//person := test.Person{
 	//	Name:        "Tom",
@@ -77,9 +122,16 @@ func main() {
 	//	Sex:         "Male",
 	//	Description: "Cool",
 	//}
+
 	//_ = test.PrintUseTag(&person)
 
-	var stru resume
-	doc := findDoc(&stru)
-	fmt.Printf("name字段为：%s\n", doc["name"])
+	r := Reflect{
+		Name: "Jack",
+		Age:  18,
+	}
+
+	//r.getType()
+	//r.getValue()
+	//r.setValue()
+	r.reflectStruct()
 }

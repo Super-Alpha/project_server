@@ -972,7 +972,6 @@ func maxVal(a, b int) int {
 func maxNum(nums []int) int {
 
 	maxSum := nums[0]
-
 	curSum := nums[0]
 
 	for i := 1; i < len(nums); i++ {
@@ -993,6 +992,120 @@ func compoundInterests(principal float64, rate float64, timesCompounded int, yea
 	return principal * math.Pow(1+rate/float64(timesCompounded), float64(timesCompounded*years))
 }
 
+// 1 -> 2 -> 2 -> 3 -> 4
+// 1 -> 3 -> 5
+func mergeTwoList(l1 *ListNode, l2 *ListNode) *ListNode {
+	head := &ListNode{}
+	cur := head
+
+	for l1 != nil && l2 != nil {
+		if l1.Val < l2.Val {
+			cur.Next = l1
+			l1 = l1.Next
+		} else {
+			cur.Next = l2
+			l2 = l2.Next
+		}
+		cur = cur.Next
+	}
+
+	if l1 != nil {
+		cur.Next = l1
+	} else {
+		cur.Next = l2
+	}
+
+	return head.Next
+}
+
+// "abcabcbb"
+func LengthOfLongestSubstring(s string) int {
+	maxLength := 1
+	for i := 0; i < len(s)-1; i++ {
+		length := 1
+		for j := i + 1; j < len(s); j++ {
+
+		}
+		if length > maxLength {
+			maxLength = length
+		}
+	}
+	return maxLength
+}
+
+// 输入：s = "()[]{}"
+// 输出：true
+func isSameElement(str string) bool {
+
+	stack := make([]rune, 0)
+
+	for _, v := range str {
+		if v == '(' || v == '[' || v == '{' {
+			stack = append(stack, v)
+		} else {
+			switch v {
+			case ')':
+				if len(stack) >= 1 && stack[len(stack)-1] == '(' {
+					stack = stack[:len(stack)-1]
+				} else {
+					return false
+				}
+			case ']':
+				if len(stack) >= 1 && stack[len(stack)-1] == '[' {
+					stack = stack[:len(stack)-1]
+				} else {
+					return false
+				}
+			case '}':
+				if len(stack) >= 1 && stack[len(stack)-1] == '{' {
+					stack = stack[:len(stack)-1]
+				} else {
+					return false
+				}
+			}
+		}
+	}
+
+	return len(stack) == 0
+}
+
+// 输入: nums = [1,2,3,4]
+// 输出: [24,12,8,6]
+func productExceptSelf(nums []int) []int {
+
+	res := make([]int, len(nums))
+	for i := 0; i < len(nums); i++ {
+		res[i] = 1
+	}
+
+	for i := 0; i < len(nums); i++ {
+		for j := 0; j < len(nums); j++ {
+			if i != j {
+				res[i] *= nums[j]
+			}
+		}
+	}
+
+	return res
+}
+
+// 删除相邻的重复字母
+// Eg: abbaca  -> ca
+func removeDuplicateLetters(s string) string {
+
+	stack := make([]rune, 0)
+
+	for _, v := range s {
+		if len(stack) != 0 && stack[len(stack)-1] == v {
+			stack = stack[:len(stack)-1]
+		} else {
+			stack = append(stack, v)
+		}
+	}
+
+	return string(stack)
+}
+
 func main() {
 	//kafka.Producer()
 	//kafka.Consumer()
@@ -1001,5 +1114,7 @@ func main() {
 	//kafka.ClusterAdmin()
 	//kafka.OffsetManager()
 	//msg, _:= kafka.GetAllMessagesByTopic("demo")
-	fmt.Println(compoundInterests(200000, 0.02, 1, 50))
+
+	//fmt.Println(productExceptSelf([]int{1, 2, 3, 4}))
+	fmt.Println(removeDuplicateLetters("abbaca"))
 }

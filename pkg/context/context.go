@@ -1,4 +1,4 @@
-package context
+package main
 
 import (
 	"context"
@@ -48,10 +48,10 @@ func goroutine3(ctx context.Context, wg *sync.WaitGroup, duration time.Duration)
 	defer wg.Done()
 	for {
 		select {
-		case <-ctx.Done():
+		case <-ctx.Done(): // 如果上下文被取消，退出循环
 			fmt.Println("goroutine3", ctx.Err())
 			return
-		case <-time.After(duration):
+		case <-time.After(duration): // 如果超时，退出循环
 			fmt.Printf("goroutine3 value = %d\n", ctx.Value("label"))
 			return
 		}
@@ -97,12 +97,17 @@ func WithValueApplication() {
 
 	p := context.WithValue(context.Background(), "label", 100)
 
-	//ctx, cancel := context.WithTimeout(p, 1000*time.Millisecond)
+	ctx, cancel := context.WithTimeout(p, 2*time.Second)
 
-	//defer cancel()
+	defer cancel()
 
 	wg.Add(1)
-	go goroutine3(p, wg, 200*time.Millisecond)
+
+	go goroutine3(ctx, wg, 1*time.Second)
 
 	wg.Wait()
+}
+
+func main() {
+	WithValueApplication()
 }

@@ -63,6 +63,8 @@ func reverse(head *Node) *Node {
 }
 
 // 将两个有序链表合并为一个有序链表
+// 1 -> 2 -> 2 -> 3 -> 4
+// 1 -> 3 -> 5
 func mergeTwoLists(node1, node2 *Node) *Node {
 	root := &Node{} // 固定链表头
 	cur := root     // 充当游标
@@ -190,7 +192,7 @@ func reverseList(head *Node) *Node {
 	return prev
 }
 
-func Main1() {
+func main() {
 	head1 := &Node{0, nil}
 	head2 := &Node{10, nil}
 

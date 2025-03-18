@@ -5,23 +5,24 @@ import (
 	"sync"
 )
 
-func once(flag string, wp *sync.WaitGroup, on *sync.Once) {
+func once(flag string, wg *sync.WaitGroup, on *sync.Once) {
 	// 只执行一次，多用于初始化操作
 	on.Do(func() {
 		fmt.Printf("flag:%s\n", flag)
 	})
 
-	wp.Done()
+	wg.Done()
 }
 
 func main() {
 	wp := &sync.WaitGroup{}
 	on := &sync.Once{}
 
-	wp.Add(2)
+	wp.Add(10)
 
-	go once("go1", wp, on)
-	go once("go2", wp, on)
+	for i := 0; i < 10; i++ {
+		go once(fmt.Sprintf("demo%d", i+1), wp, on)
+	}
 
 	wp.Wait()
 }
